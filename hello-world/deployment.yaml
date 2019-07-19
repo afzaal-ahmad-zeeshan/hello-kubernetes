@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: express-nodejs-deployment
+  labels:
+    runtime: nodejs
+spec: 
+  replicas: 3
+  selector:
+    matchLabels:
+      name: express-nodejs-pod
+  template:
+    metadata:
+      labels:
+        name: express-nodejs-pod
+    spec:
+      containers:
+      - name: express-nodejs
+        image: afzaalahmadzeeshan/express-nodejs:latest
+        ports:
+        - containerPort: 5000
+        resources:
+          limits:
+            memory: 256Mi
+            cpu: 250m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: express-nodejs-service
+spec:
+  ports:
+  - port: 80
+    targetPort: 5000
+  selector:
+    name: express-nodejs-pod

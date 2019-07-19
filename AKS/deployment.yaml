@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: expressjs
+  name: express-nodejs-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: express-nodejs-pod
+  template:
+    metadata:
+      labels:
+        name: express-nodejs-pod
+    spec:
+      containers:
+      - name: expressjs
+        image: afzaalahmadzeeshan/express-nodejs:latest
+        env: 
+          - name: appInsightsKey
+            value: <your-application-insights-instrumentation-key>
+          - name: PORT
+            value: "1000"
+        resources:
+          limits:
+            memory: 256Mi
+            cpu: 250m
+        ports:
+          - containerPort: 1000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: express-nodejs-service
+spec:
+  type: LoadBalancer
+  selector:
+    name: express-nodejs-pod
+  ports:
+  - port: 80
+    targetPort: 1000

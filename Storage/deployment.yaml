@@ -1,0 +1,55 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: cluster-storage
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: Immediate
+--- 
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: persistent-volume
+spec:
+  persistentVolumeReclaimPolicy: Recycle
+  storageClassName: cluster-storage
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 2Gi
+  volumeMode: Filesystem
+--- 
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: persistent-volume-claim-1gi
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  storageClassName: cluster-storage
+  resources:
+    requests:
+      storage: 1Gi
+--- 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: express-nodejs-pod
+  labels:
+    app: express-nodejs
+spec:
+  containers:
+    - name: frontend
+      image: afzaalahmadzeeshan/express-nodejs:latest
+      resources:
+        limits:
+          memory: 256Mi
+          cpu: 250m
+      ports:
+        - containerPort: 5000
+          hostPort: 80
+  volumes:
+    - name: pod-volume-claim
+      persistentVolumeClaim:
+        claimName: persistent-volume-claim-1gi
+        readOnly: true

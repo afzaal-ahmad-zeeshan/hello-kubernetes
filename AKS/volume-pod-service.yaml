@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: persistent-volume-claim-1gi
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: default
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: express-nodejs-pod
+  labels:
+    app: express-nodejs-pod
+spec:
+  containers:
+    - name: expressjs
+      image: afzaalahmadzeeshan/express-nodejs:latest
+      resources:
+        limits:
+          memory: 256Mi
+          cpu: 250m
+      ports:
+        - containerPort: 5000
+      volumeMounts:
+        - mountPath: "/tmp/storage/nodejs"
+          name: pod-volume-claim
+  volumes:
+    - name: pod-volume-claim
+      persistentVolumeClaim:
+        claimName: persistent-volume-claim-1gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: express-nodejs-service
+  labels:
+    type: LoadBalancer
+spec:
+  type: LoadBalancer
+  loadBalancerIP: <your-external-ip>
+  ports:
+  - port: 80
+    targetPort: 5000
+  selector:
+    app: express-nodejs-pod
+---

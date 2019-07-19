@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: express-nodejs-pod
+  labels:
+    app: express-nodejs
+spec:
+  containers:
+    - name: frontend
+      image: afzaalahmadzeeshan/express-nodejs:latest
+      resources:
+        limits:
+          memory: 256Mi
+          cpu: 250m
+      ports:
+        - containerPort: 5000
+          hostPort: 80
+      volumeMounts:
+        - mountPath: "/tmp/storage/nodejs"
+          name: pod-volume-claim
+  volumes:
+    - name: pod-volume-claim
+      persistentVolumeClaim:
+        claimName: persistent-volume-claim-1gi
