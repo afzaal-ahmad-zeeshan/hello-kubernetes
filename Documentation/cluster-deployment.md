@@ -80,6 +80,16 @@ $ sudo swapoff -a
 ```
 This might take a couple of seconds, to a couple of minutes depending upon how much your system has used the swapping feature on the machine. On fresh instances it might take just a couple of seconds (or even milliseconds). 
 
+### Downloading `kubeadm`
+
+Before you get started, and after everything is done, you need to download and setup the `kubeadm` command. If you have been following the steps in this tutorial, execute:
+
+```
+$ sudo apt-get install kubeadm
+```
+
+This will install the `kubeadm`, and you will be able to follow along with the next steps in this tutorial. 
+
 ### Booting up the cluster
 Once everything is done and your processes are running, all you need to do is execute this command. 
 
